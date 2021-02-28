@@ -51,7 +51,7 @@ function DrawPlayer(){ // Function to draw the player on the canvas
     ctx.fillRect(PlayerX, PlayerY, 8, 8);
 	ctx.beginPath();
 	ctx.moveTo(PlayerX+4, PlayerY+4);
-	ctx.lineTo(PlayerX-DeltaX*5, PlayerY-DeltaY*5);
+	ctx.lineTo(PlayerX-DeltaX*5+4, PlayerY-DeltaY*5+4);
 	ctx.stroke();
 }
 
