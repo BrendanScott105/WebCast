@@ -1,3 +1,4 @@
+<input type="text" id="myText" value="Rotation">
 <canvas id="canvas" width="1024" height="512" style="border:1px solid #000000;">
 <script>
 var mapX = 16
@@ -32,18 +33,74 @@ DrawPlayer()
 window.addEventListener('keydown', (event) => { // Detect WASD keypresses
 	if (event.key == 'w'){PlayerX -= DeltaX; PlayerY -= DeltaY;}
 	if (event.key == 's'){PlayerX += DeltaX; PlayerY += DeltaY;}
-	if (event.key == 'a'){PAngle -= 0.1; if(PAngle == 0){PAngle += 2*Math.Pi}
-	DeltaX=Math.cos(PAngle)*5; DeltaY=Math.sin(PAngle)*5;}
-	if (event.key == 'd'){PAngle += 0.1; if(PAngle > 2*Math.Pi){PAngle -= 2*Math.Pi}
-	DeltaX=Math.cos(PAngle)*5; DeltaY=Math.sin(PAngle)*5;};
-	console.log(PAngle);
+	if (event.key == 'a'){
+	PAngle -= 0.1
+	if(PAngle < 0){PAngle += 2*Math.PI}
+	DeltaX=Math.cos(PAngle)*5; 
+	DeltaY=Math.sin(PAngle)*5;
+	}
+	if (event.key == 'd'){
+	PAngle += 0.1
+	if(PAngle > 2*Math.PI){PAngle -= 2*Math.PI}
+	DeltaX=Math.cos(PAngle)*5; 
+	DeltaY=Math.sin(PAngle)*5;}
 });
 var MainLoop = setInterval(function(){
 	ctx.fillStyle = "#888888";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	Draw2dMap()
 	DrawPlayer()
+	Draw3D()
 });
+
+function Draw3D(){
+	var RayCount;
+	var MapX2; var MapY2;
+	var MapPos; var DOF;
+	var RayX; var RayY;
+	var RayAngle;
+	var Xoff; var YOff;
+	RayAngle = PAngle;
+	for(RayCount = 0; RayCount < 1; RayCount++){
+		//Horizontal
+		DOF = 0;
+		var aTan = (-1/Math.tan(RayAngle));
+		if(RayAngle < Math.PI){ // Looking up
+			RayY = ((Math.floor(PlayerY/32))*32)-0.0001;
+			document.getElementById("myText").value = RayY;
+			RayX = (PlayerY - RayY)*aTan+PlayerX;
+			YOff = -32;
+			XOff = -YOff*aTan;
+		}
+		if(RayAngle > Math.PI){ // Looking down
+			RayY = ((Math.floor(PlayerY/32))*32)+32;
+			RayX = (PlayerY - RayY)*aTan+PlayerX;
+			YOff = 32;
+			XOff = -YOff*aTan;
+		}
+		if (RayAngle == 0 || RayAngle == Math.PI){ // Left or right
+		RayX = PlayerX;
+		RayY = PlayerY;
+		DOF = 8;
+		}
+		while(DOF < 8) {
+			MapX2 = Math.floor(RayX/32);
+			MapY2 = Math.floor(RayY/32);
+			MapPos = MapY2*mapX+MapX2;
+			if(MapPos < mapX * mapY && map[MapPos] == 1){ // If wall hit
+				DOF = 8;
+			} else {
+				RayX += XOff;
+				RayY += YOff;
+				DOF += 1;
+			}
+		}
+		ctx.strokeStyle = "#00FF00";
+		ctx.moveTo(PlayerX + 4, PlayerY + 4);
+		ctx.lineTo(RayX, RayY);
+		ctx.stroke();
+	}
+}
 
 function DrawPlayer(){ // Function to draw the player on the canvas
 	ctx.fillStyle = "#FFFF00";
