@@ -1,0 +1,69 @@
+<canvas id="canvas" width="1024" height="512" style="border:1px solid #000000;">
+<script>
+var mapX = 16
+var mapY = 16
+var mapSize = 32
+var map = [
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,  //████████████████████████████████
+1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,  //██            ████            ██
+1,0,1,0,0,1,0,1,1,0,0,0,0,0,0,1,  //██  ██    ██  ████            ██
+1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,  //██    ████                    ██
+1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,  //██    ████                    ██
+1,0,1,0,0,1,0,1,1,0,0,0,0,0,0,1,  //██  ██    ██  ████            ██
+1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,  //██            ████            ██
+1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,  //██████    ████████████    ██████
+1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,  //██████    ████████████    ██████
+1,0,1,1,0,1,0,1,1,0,0,0,0,0,0,1,  //██  ████  ██  ████            ██
+1,0,1,0,0,0,0,1,1,0,1,1,0,1,0,1,  //██  ██        ████  ████  ██  ██
+1,0,0,0,1,1,0,0,0,0,1,0,0,1,0,1,  //██      ████        ██    ██  ██
+1,1,1,1,1,0,0,0,0,0,1,0,0,1,0,1,  //██████████          ██    ██  ██
+1,0,1,0,1,0,0,1,1,0,1,0,1,1,0,1,  //██  ██  ██  ██████  ██  ████  ██
+1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,  //██            ████            ██
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1   //████████████████████████████████
+];
+
+var CanvID = document.getElementById("canvas");
+var ctx = canvas.getContext("2d"); // Get canvas context
+var PlayerX = 300; var PlayerY = 300; // Set initial player X and Y values
+var DeltaX = 0; var DeltaY = 0; var PAngle = 0;
+DeltaX=Math.cos(PAngle)*5; DeltaY=Math.sin(PAngle)*5;
+DrawPlayer()
+
+window.addEventListener('keydown', (event) => { // Detect WASD keypresses
+	if (event.key == 'w'){PlayerX -= DeltaX; PlayerY -= DeltaY;}
+	if (event.key == 's'){PlayerX += DeltaX; PlayerY += DeltaY;}
+	if (event.key == 'a'){PAngle -= 0.1; if(PAngle == 0){PAngle += 2*Math.Pi}
+	DeltaX=Math.cos(PAngle)*5; DeltaY=Math.sin(PAngle)*5;}
+	if (event.key == 'd'){PAngle += 0.1; if(PAngle > 2*Math.Pi){PAngle -= 2*Math.Pi}
+	DeltaX=Math.cos(PAngle)*5; DeltaY=Math.sin(PAngle)*5;};
+	console.log(PAngle);
+});
+var MainLoop = setInterval(function(){
+	ctx.fillStyle = "#888888";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	Draw2dMap()
+	DrawPlayer()
+});
+
+function DrawPlayer(){ // Function to draw the player on the canvas
+	ctx.fillStyle = "#FFFF00";
+	ctx.strokeStyle = "#FFFF00";
+    ctx.fillRect(PlayerX, PlayerY, 8, 8);
+	ctx.beginPath();
+	ctx.moveTo(PlayerX+4, PlayerY+4);
+	ctx.lineTo(PlayerX-DeltaX*5, PlayerY-DeltaY*5);
+	ctx.stroke();
+}
+
+function Draw2dMap(){
+	var y; var x;
+	for (y = 0; y < mapY; y++){
+		for (x = 0; x < mapX; x++){
+			if(map[y*mapX+x] == 1) {
+			ctx.fillStyle = "#FFFFFF";
+			} else {ctx.fillStyle = "#000000";}
+			ctx.fillRect(x*mapSize, y*mapSize, 31, 31);
+		}
+	}
+}
+</script>
