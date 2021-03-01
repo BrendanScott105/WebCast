@@ -28,6 +28,8 @@ var CanvID = document.getElementById("canvas");
 var ctx = canvas.getContext("2d"); // Get canvas context
 var PlayerX = 384; var PlayerY = 127; // Set initial player X and Y values
 var DeltaX = 0; var DeltaY = 0; var PAngle = 0;
+var NewFOV = 35; var NewFOVExt = DegInRad/(7.31428571/(NewFOV/35));
+var RoomH = 1; var ViewRange = 80;
 DeltaX=Math.cos(PAngle)*5; DeltaY=Math.sin(PAngle)*5;
 DrawPlayer()
 
@@ -86,7 +88,7 @@ function Draw3D(){
 	var RayAngle;
 	var Xoff; var YOff;
 	var Dist;
-	RayAngle = PAngle - DegInRad*35;
+	RayAngle = PAngle - DegInRad*NewFOV;
 	if(RayAngle<0){RayAngle += 2*Math.PI}
 	if(RayAngle>2*Math.PI){RayAngle -= 2*Math.PI}
 	for(RayCount = 0; RayCount < 500; RayCount++){
@@ -174,14 +176,14 @@ function Draw3D(){
 		Dist=Dist*Math.cos(CounterFisheye); // Fix fisheye effect
 		var LineHeight = (mapSize * 256)/Dist;
 		if (LineHeight > 512){LineHeight = 512}
-		RayAngle += DegInRad/7.31428571;
-		ctx.moveTo(RayCount+512, 256-(LineHeight/2));
+		RayAngle += NewFOVExt;
+		ctx.moveTo(RayCount+512, 256-(LineHeight/2) * RoomH);
 		ctx.lineTo(RayCount+512, 256+(LineHeight/2));
 		ctx.stroke();
 		ctx.beginPath();
 		ctx.strokeStyle = "#00AA00";
 		ctx.moveTo(RayCount+512, 0);
-		ctx.lineTo(RayCount+512, 256-(LineHeight/2)-1);
+		ctx.lineTo(RayCount+512, (256-((LineHeight/2)*RoomH)-1));
 		ctx.stroke();
 		ctx.beginPath();
 		ctx.strokeStyle = "#0000AA";
@@ -214,4 +216,18 @@ function Draw2dMap(){
 		}
 	}
 }
+
+function SetControlVals(){
+	NewFOV = document.getElementById("PFOV").value
+	NewFOVExt = DegInRad/(7.31428571/(NewFOV/35))
+	RoomH = document.getElementById("RH").value
+}
 </script>
+</canvas>
+<form>
+  <label for="textin">Field of view [Degrees] :</label><br>
+  <input type="text" id="PFOV" name="fname" value="35"><br>
+  <label for="textin">Room height :</label><br>
+  <input type="text" id="RH" name="fname" value="1">
+  <button type="button" onclick="SetControlVals()">Set values</button>
+</form>
