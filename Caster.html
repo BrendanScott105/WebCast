@@ -32,8 +32,28 @@ DeltaX=Math.cos(PAngle)*5; DeltaY=Math.sin(PAngle)*5;
 DrawPlayer()
 
 window.addEventListener('keydown', (event) => { // Detect WASD keypresses
-	if (event.key == 'w'){PlayerX -= DeltaX; PlayerY -= DeltaY;}
-	if (event.key == 's'){PlayerX += DeltaX; PlayerY += DeltaY;}
+	var PlayXOff = 0; if (DeltaX<0){PlayXOff=10;}else{PlayXOff=-10;}
+	var PlayYOff = 0; if (DeltaY<0){PlayYOff=10;}else{PlayYOff=-10;}
+	var GridPosX = Math.floor(PlayerX/32); GridXAddOff = Math.floor((PlayerX+PlayXOff)/32);
+	var GridXSubOff = Math.floor((PlayerX-PlayXOff)/32);
+	var GridPosY = Math.floor(PlayerY/32); GridYAddOff = Math.floor((PlayerY+PlayYOff)/32);
+	var GridYSubOff = Math.floor((PlayerY-PlayYOff)/32);
+	if (event.key == 'w'){
+		if(map[Math.floor(GridPosY*mapX+GridXAddOff)]==0){
+			PlayerX -= DeltaX;
+		}
+		if(map[Math.floor(GridYAddOff*mapX+GridPosX)]==0){
+			PlayerY -= DeltaY;
+		}
+	}
+	if (event.key == 's'){
+		if(map[Math.floor(GridPosY*mapX+GridXSubOff)]==0){
+				PlayerX += DeltaX;
+			}
+			if(map[Math.floor(GridYSubOff*mapX+GridPosX)]==0){
+				PlayerY += DeltaY;
+			}
+		}
 	if (event.key == 'a'){
 	PAngle -= 0.1
 	if(PAngle < 0){PAngle += 2*Math.PI}
