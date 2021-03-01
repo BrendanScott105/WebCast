@@ -48,7 +48,7 @@ window.addEventListener('keydown', (event) => { // Detect WASD keypresses
 });
 var MainLoop = setInterval(function(){
 	ctx.fillStyle = "#888888";
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.fillRect(0, 0, canvas.width/2, canvas.height);
 	Draw2dMap()
 	Draw3D()
 	DrawPlayer()
@@ -157,6 +157,16 @@ function Draw3D(){
 		RayAngle += DegInRad/7.31428571;
 		ctx.moveTo(RayCount+512, 256-(LineHeight/2));
 		ctx.lineTo(RayCount+512, 256+(LineHeight/2));
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.strokeStyle = "#00AA00";
+		ctx.moveTo(RayCount+512, 0);
+		ctx.lineTo(RayCount+512, 256-(LineHeight/2)-1);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.strokeStyle = "#0000AA";
+		ctx.moveTo(RayCount+512, 512);
+		ctx.lineTo(RayCount+512, 256+(LineHeight/2)+1);
 		ctx.stroke();
 		if(RayAngle<0){RayAngle += 2*Math.PI}
 		if(RayAngle>2*Math.PI){RayAngle -= 2*Math.PI}
